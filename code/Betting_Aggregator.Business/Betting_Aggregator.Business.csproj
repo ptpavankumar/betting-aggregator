@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />     
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\Initial.cs" />
+    <Compile Remove="bettingAggregatorContext.cs" />
+    <Compile Remove="Migrations\20191218051732_addSchemaTable %28copy%29.Designer.cs" />
+    <Compile Remove="Migrations\20191218051732_initialise.Designer.cs" />
+    <Compile Remove="Migrations\20191218051800_addCourseTable.Designer.cs" />
+    <Compile Remove="Migrations\20191218051900_addEmplloyeeTable.Designer.cs" />
+    <Compile Remove="Migrations\AppDbContextContextModelSnapshot.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Database\" />
+    <Folder Include="Database\Migrations\" />
+    <Folder Include="Database\DbModels\" />
+  </ItemGroup>
+</Project>

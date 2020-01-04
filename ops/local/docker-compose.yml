@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+    web_service:
+        build: 
+          dockerfile: ./ops/Dockerfile
+          context: ../../
+          args:
+            DB_CONNECTION_STRING: "server=bg_db_service;port=5432;userid=postgres;password=sa;database=bettingAggregator"
+        depends_on:
+            - bg_db_service
+        container_name: ba_web
+        ports:
+            - "3000:3000"
+        restart: on-failure
+    bg_db_service:
+        image: "postgres"
+        container_name: ba_db
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "sa"
+            POSTGRES_DB: "bettingAggregator"
+        networks:
+            - local
+networks:
+    local:
+        name: local_network
