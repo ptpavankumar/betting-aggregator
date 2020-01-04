@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Betting_Aggregator.Utils
 {
-    public class BadRequestInputDataException : Exception
+    public class InputDataValidationException : Exception
     {
-        public BadRequestInputDataException(IDictionary<string, string> details)
+        public InputDataValidationException(IDictionary<string, string> details)
             : base(string.Empty)
         {
             Details = details;
         }
 
-        public BadRequestInputDataException(IDictionary<string, string> details, string message)
+        public InputDataValidationException(IDictionary<string, string> details, string message)
             : base(message)
         {
             Details = details;
         }
 
-        public BadRequestInputDataException(IDictionary<string, string> details, string message,
+        public InputDataValidationException(IDictionary<string, string> details, string message,
             Exception innerException) :
             base(message, innerException)
         {

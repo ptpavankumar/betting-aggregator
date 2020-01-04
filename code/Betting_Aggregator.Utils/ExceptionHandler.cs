@@ -10,11 +10,12 @@ namespace Betting_Aggregator.Utils
 {
     public class ExceptionHandler
     {
-        private readonly string _internalServerErrorMessage = "Please contact administrator and present correlation identifier for troubleshooting";
-        private const string JSON = "application/json";
-        private const string BusinessValidation = "business-validation";
-        private const string FieldValidation = "field-validation";
-
+        public const string INTERNAL_SERVER_ERROR_MESSAGE = "Please contact administrator and present correlation identifier for troubleshooting";
+        public const string JSON = "application/json";
+        public const string BUSINESS_VALIDATION = "business-validation";
+        public const string FIELD_VALIDATION = "field-validation";
+        public const string UNEXPECTED_SERVERERROR = "unexpected-internal-server-error";
+        public const string INVALID_DATATYPE = "Invalid data type.";
 
         private readonly JsonSerializerSettings _jsonSerializerSettings =
             new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
@@ -32,13 +33,13 @@ namespace Betting_Aggregator.Utils
             {
                 await _next(context);
             }
-            catch (BadRequestBusinessException businessException)
+            catch (BusinessException businessException)
             {
                 await HandleBusinessExceptionAsync(context, businessException);
             }
-            catch (BadRequestInputDataException badRequestException)
+            catch (InputDataValidationException badRequestException)
             {
-                await HandleBadRequestExceptionAsync(context, badRequestException);
+                await HandleInputDataValidationExceptionAsync(context, badRequestException);
             }
             catch (Exception ex)
             {
@@ -46,9 +47,31 @@ namespace Betting_Aggregator.Utils
             }
         }
 
-        private Task HandleBadRequestExceptionAsync(HttpContext context, BadRequestInputDataException exception)
+        private Task HandleInputDataValidationExceptionAsync(HttpContext context, InputDataValidationException exception)
         {
-            var result = JsonConvert.SerializeObject(HandleBadRequestException(exception), Formatting.Indented, _jsonSerializerSettings);
+            var badRequestResponseDetail = new List<ResponseDetail>();
+
+            foreach (var error in exception.Details)
+            {
+                var detail = new ResponseDetail
+                {
+                    Name = error.Key.ToCamelCase(),
+                    Messages = new List<string>
+                    {
+                        error.Value
+                    }
+                };
+
+                badRequestResponseDetail.Add(detail);
+            }
+
+            var inputDataValidationResponseDto = new BadResponseDto
+            {
+                Type = FIELD_VALIDATION,
+                Details = badRequestResponseDetail
+            };
+
+            var result = JsonConvert.SerializeObject(inputDataValidationResponseDto, Formatting.Indented, _jsonSerializerSettings);
 
             context.Response.ContentType = JSON;
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -56,7 +79,7 @@ namespace Betting_Aggregator.Utils
             return context.Response.WriteAsync(result);
         }
 
-        private Task HandleBusinessExceptionAsync(HttpContext context, BadRequestBusinessException exception)
+        private Task HandleBusinessExceptionAsync(HttpContext context, BusinessException exception)
         {
             var responseDetails = new List<ResponseDetail>();
 
@@ -76,7 +99,7 @@ namespace Betting_Aggregator.Utils
 
             var businessExceptionDto = new BadResponseDto
             {
-                Type = BusinessValidation,
+                Type = BUSINESS_VALIDATION,
                 Details = responseDetails
             };
 
@@ -88,48 +111,20 @@ namespace Betting_Aggregator.Utils
             return context.Response.WriteAsync(result);
         }
 
-        private BadResponseDto HandleBadRequestException(BadRequestInputDataException badRequestException)
-        {
-            
-        var badRequestResponseDetail = new List<ResponseDetail>();
-
-            foreach (var error in badRequestException.Details)
-            {
-                var detail = new ResponseDetail
-                {
-                    Name = error.Key.ToCamelCase(),
-                    Messages = new List<string>
-                    {
-                        error.Value
-                    }
-                };
-
-                if (detail.Messages.Count > 0) badRequestResponseDetail.Add(detail);
-            }
-
-            return new BadResponseDto
-            {
-                Type = FieldValidation,
-                Details = badRequestResponseDetail
-            };
-        }
-
         private Task HandleUnhandledExceptionAsync(HttpContext context, Exception exception)
         {
-            const string UNEXPECTEDSERVERERROR = "unexpected-internal-server-error";
-
             var response = new InternalServerErrorResponseDto
             {
                 CorrelationId = context.TraceIdentifier,
-                Type = UNEXPECTEDSERVERERROR,
+                Type = UNEXPECTED_SERVERERROR,
                 Details = new List<ResponseDetail>
                 {
                     new ResponseDetail
                     {
-                        Name = UNEXPECTEDSERVERERROR,
+                        Name = UNEXPECTED_SERVERERROR,
                         Messages = new List<string>
                         {
-                            _internalServerErrorMessage
+                            INTERNAL_SERVER_ERROR_MESSAGE
                         }
                     }
                 }

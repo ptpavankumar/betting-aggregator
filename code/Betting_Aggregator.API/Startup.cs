@@ -28,9 +28,9 @@ namespace Betting_Aggregator.API
         {
             services.AddAutoMapper(typeof(MapperProfile));
 
-            services.AddControllers();
+            //services.AddControllers();
 
-            //services.AddControllers(options => options.Filters.Add(new BadRequestFilter()));  
+            services.AddControllers(options => options.Filters.Add(new BadRequestFilter()));  
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(DbConnectionStringBuilder(services).ConnectionString));
             services.AddTransient<IHealthCheckService, HealthCheckService>();

@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using AutoMapper;
 using Betting_Aggregator.Api.Dtos;
 using Betting_Aggregator.Business;
+using Betting_Aggregator.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -28,8 +32,22 @@ namespace Betting_Aggregator.Api.Controllers
         public IHealthCheckService _healthCheckService { get; }
 
         [HttpGet]
-        public ActionResult<HealthCheckDTO> Get()
+        public ActionResult<HealthCheckDTO> Get([FromQuery] bool throwInternalServerError, [FromQuery] bool throwBadRequestError)
         {
+
+            var businessExceptionDetails = new Dictionary<string, string>();
+            businessExceptionDetails.Add("CollectionSet", "Probability Invalid to empty set");
+            if (throwBadRequestError)
+            {
+                ModelState.AddModelError("", "Do not use this in production");
+
+                throw new BusinessException(businessExceptionDetails);
+            }
+            if (throwInternalServerError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Exception("sample error"));
+            }
+
             var dependents = new List<Dependent>();
 
             var dependent = _healthCheckService.GetDbVersion();
