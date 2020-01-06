@@ -32,7 +32,7 @@ namespace Betting_Aggregator.Business.Database
         }
 
         public DbSet<__EFMigrationsHistory> __EFMigrationsHistory { get; set; }
-        public DbSet<Course> Courses { get; set; }
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<League> Leagues { get; set; }
+        public DbSet<Country> Countries { get; set; }
     }
 }

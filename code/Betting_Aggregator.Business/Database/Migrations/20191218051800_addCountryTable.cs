@@ -6,29 +6,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Betting_Aggregator.Business.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191218051800_addCourseTable")]
+    [Migration("20191218051800_addCountryTable")]
     public class addCourseTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-            name: "Course",
+            name: "Country",
             columns: table => new
             {
-                CourseID = table.Column<int>(nullable: false),
-                Credits = table.Column<int>(nullable: false),
-                Title = table.Column<string>(nullable: true)
+                ID = table.Column<int>(nullable: false),
+                Name = table.Column<string>(nullable: false),
+                CC = table.Column<string>(nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Course", x => x.CourseID);
+                table.PrimaryKey("PK_Country", x => x.ID);
             });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-            name: "Course");
+            name: "Country");
         }
     }
 }

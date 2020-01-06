@@ -20,66 +20,7 @@ namespace Betting_Aggregator.Utils
         private readonly JsonSerializerSettings _jsonSerializerSettings =
             new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-        private readonly RequestDelegate _next;
-
-        public ExceptionHandler(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public async Task Invoke(HttpContext context)
-        {
-            try
-            {
-                await _next(context);
-            }
-            catch (BusinessException businessException)
-            {
-                await HandleBusinessExceptionAsync(context, businessException);
-            }
-            catch (InputDataValidationException badRequestException)
-            {
-                await HandleInputDataValidationExceptionAsync(context, badRequestException);
-            }
-            catch (Exception ex)
-            {
-                await HandleUnhandledExceptionAsync(context, ex);
-            }
-        }
-
-        private Task HandleInputDataValidationExceptionAsync(HttpContext context, InputDataValidationException exception)
-        {
-            var badRequestResponseDetail = new List<ResponseDetail>();
-
-            foreach (var error in exception.Details)
-            {
-                var detail = new ResponseDetail
-                {
-                    Name = error.Key.ToCamelCase(),
-                    Messages = new List<string>
-                    {
-                        error.Value
-                    }
-                };
-
-                badRequestResponseDetail.Add(detail);
-            }
-
-            var inputDataValidationResponseDto = new BadResponseDto
-            {
-                Type = FIELD_VALIDATION,
-                Details = badRequestResponseDetail
-            };
-
-            var result = JsonConvert.SerializeObject(inputDataValidationResponseDto, Formatting.Indented, _jsonSerializerSettings);
-
-            context.Response.ContentType = JSON;
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-            return context.Response.WriteAsync(result);
-        }
-
-        private Task HandleBusinessExceptionAsync(HttpContext context, BusinessException exception)
+        public Task HandleBusinessExceptionAsync(HttpContext context, BusinessException exception)
         {
             var responseDetails = new List<ResponseDetail>();
 
@@ -111,7 +52,7 @@ namespace Betting_Aggregator.Utils
             return context.Response.WriteAsync(result);
         }
 
-        private Task HandleUnhandledExceptionAsync(HttpContext context, Exception exception)
+        public Task HandleUnhandledExceptionAsync(HttpContext context, Exception exception)
         {
             var response = new InternalServerErrorResponseDto
             {

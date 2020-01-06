@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using Betting_Aggregator.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -10,61 +10,33 @@ namespace Betting_Aggregator.API.Dtos
     public class BadRequestFilter : IActionFilter
     {
         public void OnActionExecuting(ActionExecutingContext context)
-        {
-            if (context.ModelState.IsValid) return;
-
-            context.Result = new BadRequestObjectResult(
-                BadRequestDtoHelper.GetResponseDto(context.ModelState));
-        }
+        { }
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            // do something after the action executes
-        }
-    }
-
-    public static class BadRequestDtoHelper
-    {
-        public static BadResponseDto GetResponseDto(ModelStateDictionary modelState)
-        {
-            if (modelState.IsValid) return null;
-
-            var badRequestResponseDetail = new List<ResponseDetail>();
-
-            foreach (var errorState in modelState)
+            if (context.Exception != null)
             {
-                var detail = GetDetail(errorState);
+                var handler = new ExceptionHandler();
 
-                if (detail.Messages.Count > 0) badRequestResponseDetail.Add(detail);
+                Task responseObject;
+                if (context.Exception is BusinessException)
+                {
+                    responseObject = handler.HandleBusinessExceptionAsync(context.HttpContext, context.Exception as BusinessException);
+                    context.Result = new ObjectResult(responseObject)
+                    {
+                        StatusCode = 400,
+                    };
+                }
+                else
+                {
+                    responseObject = handler.HandleUnhandledExceptionAsync(context.HttpContext, context.Exception);
+                    context.Result = new ObjectResult(responseObject)
+                    {
+                        StatusCode = 500,
+                    };
+                }
+                context.ExceptionHandled = true;
             }
-
-            return new BadResponseDto
-            {
-                Type = ExceptionHandler.FIELD_VALIDATION,
-                Details = badRequestResponseDetail
-            };
-        }
-
-        private static ResponseDetail GetDetail(KeyValuePair<string, ModelStateEntry> errorState)
-        {
-            var detail = new ResponseDetail
-            {
-                Name = errorState.Key.ToCamelCase(),
-                Messages = new List<string>()
-            };
-
-            if (errorState.Value?.Errors == null) return detail;
-
-            foreach (var error in errorState.Value.Errors) detail.Messages.Add(GetErrorFrom(error));
-
-            return detail;
-        }
-
-        private static string GetErrorFrom(ModelError error)
-        {
-            if (error == null) return string.Empty;
-
-            return string.IsNullOrWhiteSpace(error.ErrorMessage) ? ExceptionHandler.INVALID_DATATYPE : error.ErrorMessage;
         }
     }
 }

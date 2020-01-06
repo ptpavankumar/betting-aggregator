@@ -7,29 +7,30 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Betting_Aggregator.Business.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191218051900_addEmployeeTable")]
+    [Migration("20191218051900_addLeagueTable")]
     public class addEmployeeTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-            name: "Employee",
+            name: "League",
             columns: table => new
             {
                 Id = table.Column<int>(nullable: false),
-                Name = table.Column<int>(nullable: false),
-                Title = table.Column<string>(nullable: true)
+                Name = table.Column<string>(nullable: false),
+                HasTable = table.Column<bool>(nullable: true),
+                HasTopList = table.Column<bool>(nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Employee", x => x.Id);
+                table.PrimaryKey("PK_League", x => x.Id);
             });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-            name: "Employee");
+            name: "League");
         }
 
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

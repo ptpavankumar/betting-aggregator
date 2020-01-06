@@ -6,6 +6,7 @@ using Betting_Aggregator.Business.Database;
 using Betting_Aggregator.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,12 +29,20 @@ namespace Betting_Aggregator.API
         {
             services.AddAutoMapper(typeof(MapperProfile));
 
-            //services.AddControllers();
+            services.AddControllers(options => options.Filters.Add(new BadRequestFilter()))
+                    .ConfigureApiBehaviorOptions(options =>
+                    {
+                        options.InvalidModelStateResponseFactory = context =>
+                        {
+                            var problems = new CustomBadRequest(context);
 
-            services.AddControllers(options => options.Filters.Add(new BadRequestFilter()));  
+                            return new BadRequestObjectResult(problems);
+                        };
+                    });  
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(DbConnectionStringBuilder(services).ConnectionString));
             services.AddTransient<IHealthCheckService, HealthCheckService>();
+            services.AddTransient<ILeagueService, LeagueService>();
         }
 
         private static NpgsqlConnectionStringBuilder DbConnectionStringBuilder(IServiceCollection services)
@@ -70,8 +79,6 @@ namespace Betting_Aggregator.API
             app.UseHttpsRedirection();
 
             app.UseCorrelationId();
-
-            app.UseCustomExceptionHandler();
 
             app.UseRouting();
 
