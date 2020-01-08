@@ -48,7 +48,6 @@ namespace Betting_Aggregator.Utils
 
             context.Response.ContentType = JSON;
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
             return context.Response.WriteAsync(result);
         }
 

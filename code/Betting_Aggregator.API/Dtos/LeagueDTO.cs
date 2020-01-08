@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Betting_Aggregator.Utils;
+using Betting_Aggregator.Api.Utils;
 using Newtonsoft.Json;
 
 namespace Betting_Aggregator.API.Dtos

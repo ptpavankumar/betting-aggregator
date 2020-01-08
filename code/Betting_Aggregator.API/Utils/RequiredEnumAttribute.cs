@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Betting_Aggregator.Utils
+namespace Betting_Aggregator.Api.Utils
 {
     public class RequiredEnumAttribute : RequiredAttribute
     {

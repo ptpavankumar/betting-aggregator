@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Betting_Aggregator.API.Dtos;
+using Betting_Aggregator.API.Utils;
 using Betting_Aggregator.Business;
 using Betting_Aggregator.Business.Database;
 using Betting_Aggregator.Utils;

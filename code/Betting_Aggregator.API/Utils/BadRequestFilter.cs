@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Betting_Aggregator.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Betting_Aggregator.API.Dtos
+namespace Betting_Aggregator.API.Utils
 {
     public class BadRequestFilter : IActionFilter
     {

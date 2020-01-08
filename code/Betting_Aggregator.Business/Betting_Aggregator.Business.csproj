@@ -30,4 +30,9 @@
     <Folder Include="Database\Migrations\" />
     <Folder Include="Database\DbModels\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Betting_Aggregator.Utils\Betting_Aggregator.Utils.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

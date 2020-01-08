@@ -1,5 +1,5 @@
 ﻿
-namespace Betting_Aggregator.Business.Migrations.Database.DbModels
+namespace Betting_Aggregator.Business.Database.DbModels
 {
     public class Country
     {

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Betting_Aggregator.API.Dtos;
 using Betting_Aggregator.Business;
+using Betting_Aggregator.Business.Models;
 using Betting_Aggregator.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -30,20 +32,15 @@ namespace Betting_Aggregator.API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            var leagues = _leagueService.FetchAll().Select(item => new LeagueDTO { Name = item.Name, SportType = (SportType)item.SportType });
+            return Ok(leagues);
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] LeagueDTO leagueDTO)
         {
-            //var dic = new Dictionary<string, string>();
-            //dic.Add("Name", "This name has already been registered");
-            //throw new BusinessException(dic);
-
-            //throw new Exception("Unhanddled exception");
-            return Ok();
-            //var type = await _templateService.CreateTemplateAsync(request);
-            //return CreatedAtAction(nameof(Get), new { type }, string.Empty);
+            var leagueId = _leagueService.Save(_mapper.Map<League>(leagueDTO));
+            return CreatedAtAction(nameof(Post), new { leagueId }, string.Empty);
         }
     }
 }

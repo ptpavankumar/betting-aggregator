@@ -1,5 +1,5 @@
 using System.IO;
-using Betting_Aggregator.Business.Migrations.Database.DbModels;
+using Betting_Aggregator.Business.Database.DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -32,7 +32,7 @@ namespace Betting_Aggregator.Business.Database
         }
 
         public DbSet<__EFMigrationsHistory> __EFMigrationsHistory { get; set; }
-        public DbSet<League> Leagues { get; set; }
+        public DbSet<League> League { get; set; }
         public DbSet<Country> Countries { get; set; }
     }
 }

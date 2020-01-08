@@ -2,7 +2,7 @@
 using Betting_Aggregator.Utils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Betting_Aggregator.API.Dtos
+namespace Betting_Aggregator.API.Utils
 {
     public class CustomBadRequest : ResponseDto
     {
